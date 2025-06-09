@@ -1,0 +1,65 @@
+// prisma/schema.prisma
+
+// Esto especifica que estamos usando un cliente de base de datos relacional
+datasource db {
+  provider = "postgresql" // ¡Cambia a postgresql!
+  url      = env("DATABASE_URL") // Asegúrate de que DATABASE_URL apunta al pooler (puerto 6543)
+}
+// Esto especifica que queremos generar el cliente de Prisma para TypeScript
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  STUDENT
+  PROFESSOR
+  ADMIN
+}
+// Modelo de Usuario para autenticación
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String    // ¡Aquí almacenaremos la contraseña hasheada!
+  role      String    @default("student") // "student" o "admin"
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  // Relación opcional con Student si un usuario es también un estudiante
+  student   Student?
+}
+
+// Modelo de Estudiante
+model Student {
+  id          String    @id @default(uuid())
+  userId      String    @unique // El ID del usuario asociado en el modelo User
+  name        String
+  lastName    String
+  idCard      String    @unique // Cédula (debe ser única)
+  age         Int
+  major       String
+  semester    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id])
+  selections  CourseSelection[] // Un estudiante puede tener múltiples selecciones (aunque solo permitiremos 1 activa)
+}
+
+// Modelo de Curso
+model Course {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  capacity    Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  selections  CourseSelection[] // Un curso puede estar en múltiples selecciones
+}
+
+// Modelo para la selección de cursos
+model CourseSelection {
+  id              String    @id @default(uuid())
+  studentId       String    @unique // Una selección por estudiante
+  selectionDate   DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  student         Student   @relation(fields: [studentId], references: [id])
+  selectedCourses Course[]  // Relación many-to-many con Course
+}
