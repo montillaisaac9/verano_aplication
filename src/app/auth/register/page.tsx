@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { User, Mail, Lock, CreditCard, Calendar, GraduationCap, BookOpen } from 'lucide-react';
 import { studentRegistrationSchema } from '@/types/formSchemas';
 import { toast } from 'react-hot-toast'; // Importamos toast
+import axios from 'axios'; 
 
 type StudentRegistrationForm = z.infer<typeof studentRegistrationSchema>;
 
@@ -26,42 +27,32 @@ const StudentRegistrationPage: React.FC = () => {
   });
 
   const onSubmit = async (data: StudentRegistrationForm) => {
-    // Usamos toast.promise para manejar los estados de carga, éxito y error automáticamente
-    try {
-      const response = await toast.promise(
-        fetch('/api/students', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        }),
-        {
-          loading: 'Registrando estudiante...', // Mensaje mientras la promesa está pendiente
-          success: '¡Estudiante registrado exitosamente!', // Mensaje si la promesa se resuelve
-          error: (err) => {
-            // Callback para errores. `err` es el error lanzado en el `if (!response.ok)`
-            return err instanceof Error ? err.message : 'Error al registrar estudiante.';
-          },
-        }
-      );
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        // Esto lanzará un error que será capturado por toast.promise en su callback `error`
-        throw new Error(result.message || 'Error desconocido al registrar estudiante.');
+  try {
+    const response = await toast.promise(
+      axios.post('/api/students', data),
+      {
+        loading: 'Registrando estudiante...',
+        success: '¡Estudiante registrado exitosamente!',
+        error: (err) =>
+          err instanceof Error
+            ? err.message
+            : 'Error al registrar estudiante.',
       }
+    );
 
-      reset(); // Resetea el formulario al éxito
-    } catch (error) {
-      // Este catch solo se ejecutará para errores que no sean de la promesa del fetch (ej. errores de red)
-      console.error('Error inesperado durante el registro:', error);
-      // El mensaje de error ya es manejado por toast.promise.
-      // Si quieres un toast adicional para errores MUY inesperados que no vienen del backend:
-      // toast.error('Ocurrió un error inesperado. Por favor, inténtalo de nuevo.');
+    // Puedes acceder directamente a response.data si el backend devuelve JSON
+    const result = response.data;
+
+    if (!response.status || response.status >= 400) {
+      throw new Error(result.message || 'Error desconocido al registrar estudiante.');
     }
-  };
+
+    reset(); // Resetea el formulario si todo salió bien
+  } catch (error) {
+    console.error('Error inesperado durante el registro:', error);
+    // El toast ya lo maneja dentro de toast.promise
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 py-8">

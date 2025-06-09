@@ -1,25 +1,39 @@
-// src/types/index.d.ts
+// src/types/index.d.ts (Actualización necesaria)
 
 // Importa directamente los tipos generados por Prisma
-// Asegúrate de haber ejecutado 'npx prisma generate' para que estos tipos existan
 import {
   User as PrismaUser,
   Student as PrismaStudent,
   Course as PrismaCourse,
   CourseSelection as PrismaCourseSelection,
-  UserRole, // UserRole ya se importa directamente
+  UserRole,
 } from '@prisma/client';
 
-// Re-exporta los tipos de Prisma si quieres usarlos con nombres más cortos
 export type User = PrismaUser;
 export type Student = PrismaStudent;
 export type Course = PrismaCourse;
 export type CourseSelection = PrismaCourseSelection;
-// No es necesario exportar 'UserRole' de nuevo aquí, ya se importa y se usa.
 
-// Extensión de tipos para NextAuth.js
-// Esto es crucial para que TypeScript sepa que la sesión y el token JWT
-// pueden contener el 'id' y el 'role' del usuario.
+// Define StudentDetails si no la tienes ya (debe coincidir con PrismaStudent si la obtienes de ahí)
+// Usaremos PrismaStudent directamente para los detalles si eso es lo que la API devuelve.
+// Si tu API retorna un subconjunto específico, define una interfaz para ese subconjunto.
+// Para simplificar, asumiremos que los detalles son los de PrismaStudent.
+// Si tu API retorna solo algunos campos, crea una interfaz más específica:
+/*
+export interface StudentDetails {
+  id: string;
+  email: string;
+  name: string;
+  lastName: string;
+  idCard: string;
+  age: number;
+  major: string;
+  semester: number;
+  // ... otros campos que tu API devuelva para el estudiante
+}
+*/
+
+
 import "next-auth";
 import "next-auth/jwt";
 
@@ -28,14 +42,15 @@ declare module "next-auth" {
     user: {
       id: string;
       email?: string | null;
-      role: UserRole; // Usa el Enum de Prisma para el rol
+      role: UserRole;
+      studentDetails?: PrismaStudent; // <--- ¡Importante! Añadir los detalles del estudiante aquí
     };
   }
 
   interface User {
     id: string;
     email: string;
-    role: UserRole; // Usa el Enum de Prisma
+    role: UserRole;
   }
 }
 
@@ -43,6 +58,6 @@ declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     email: string;
-    role: UserRole; // Usa el Enum de Prisma
+    role: UserRole;
   }
 }

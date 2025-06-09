@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast'; // Importa toast
-
 import { loginSchema, LoginFormData } from '@/types/formSchemas';
 import { CircularProgress } from '@/components/progres';
 
@@ -37,8 +36,6 @@ const LoginPage: React.FC = () => {
           loading: 'Iniciando sesión...', // Mensaje mientras carga
           success: '¡Inicio de sesión exitoso!', // Mensaje al éxito
           error: (err) => {
-            // 'err' aquí es el objeto 'AuthError' o 'Error' que NextAuth.js propaga
-            // Si el error es una cadena, la usamos directamente, si no, un mensaje genérico.
             return err instanceof Error ? err.message : 'Error al iniciar sesión.';
           },
         }
