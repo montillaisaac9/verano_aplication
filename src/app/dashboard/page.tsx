@@ -48,7 +48,7 @@ const DashboardPage: React.FC = () => {
                   ) : (
                     <p className="text-lg">Cargando tus cursos inscritos...</p>
                   )}
-                  <a href="/dashobard/form" className="mt-4 inline-block bg-white text-green-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">
+                  <a href="/dashboard/form" className="mt-4 inline-block bg-white text-green-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">
                     Inscribir Materias
                   </a>
                 </div>
