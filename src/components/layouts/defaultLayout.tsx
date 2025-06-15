@@ -22,10 +22,10 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children, userRole }) => 
         // or just omit it for certain public pages.
         // For now, let's include a basic one if no role is provided (e.g., for / page)
         <nav className="bg-gray-800 p-4 text-white text-center">
-          <p className="text-xl font-semibold">Welcome Guest</p>
+          <p className="text-xl font-semibold">Bienvenido</p>
           <div className="mt-2">
-            <a href="/auth/login" className="text-blue-300 hover:underline mx-2">Sign In</a>
-            <a href="/auth/register" className="text-blue-300 hover:underline mx-2">Register</a>
+            <a href="/auth/login" className="text-blue-300 hover:underline mx-2">Iniciar Session</a>
+            <a href="/auth/register" className="text-blue-300 hover:underline mx-2">Registrarse</a>
           </div>
         </nav>
       )}

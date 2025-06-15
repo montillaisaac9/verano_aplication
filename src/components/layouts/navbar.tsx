@@ -23,34 +23,31 @@ const Navbar: React.FC<NavbarProps> = ({ role }) => {
   return (
     <nav className="bg-gradient-to-r from-blue-700 to-blue-900 p-4 shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
-        <Link href="/" className="text-white text-2xl font-bold tracking-wide">
-          Summer Courses
+        <Link href="/dashboard" className="text-white text-2xl font-bold tracking-wide">
+          Cursos de Verano
         </Link>
         <ul className="flex space-x-6 items-center">
           {role === 'STUDENT' && (
             <>
               <li>
-                <Link href="/student/enroll" className="text-white hover:text-blue-200 transition-colors duration-200">
-                  Enroll
+                <Link href="/dashboard/form" className="text-white hover:text-blue-200 transition-colors duration-200">
+                  Cursos mas votados
                 </Link>
               </li>
               <li>
-                <Link href="/student/top-courses" className="text-white hover:text-blue-200 transition-colors duration-200">
-                  Top Courses
-                </Link>
               </li>
             </>
           )}
           {(role === 'PROFESSOR' || role === 'ADMIN') && (
             <>
               <li>
-                <Link href="/dashboard/courses" className="text-white hover:text-blue-200 transition-colors duration-200">
-                  Courses List
+                <Link href="/admin" className="text-white hover:text-blue-200 transition-colors duration-200">
+                  Lista de Cursos
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard/students" className="text-white hover:text-blue-200 transition-colors duration-200">
-                  Students
+                <Link href="/admin/profiles" className="text-white hover:text-blue-200 transition-colors duration-200">
+                  Estudiantes
                 </Link>
               </li>
               {/* Add more links for Admin/Professor roles here */}
@@ -62,7 +59,7 @@ const Navbar: React.FC<NavbarProps> = ({ role }) => {
                 onClick={handleSignOut}
                 className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md transition-colors duration-200"
               >
-                Sign Out
+                Cerrar Sesión
               </button>
             </li>
           )}

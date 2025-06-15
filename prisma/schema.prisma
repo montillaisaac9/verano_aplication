@@ -5,6 +5,7 @@ datasource db {
   provider = "postgresql" // ¡Cambia a postgresql!
   url      = env("DATABASE_URL") // Asegúrate de que DATABASE_URL apunta al pooler (puerto 6543)
 }
+
 // Esto especifica que queremos generar el cliente de Prisma para TypeScript
 generator client {
   provider = "prisma-client-js"
@@ -20,7 +21,7 @@ model User {
   id        String    @id @default(uuid())
   email     String    @unique
   password  String    // ¡Aquí almacenaremos la contraseña hasheada!
-  role      String    @default("student") // "student" o "admin"
+  role      UserRole  @default(STUDENT) // Usar el enum UserRole
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   // Relación opcional con Student si un usuario es también un estudiante
@@ -41,6 +42,7 @@ model Student {
   updatedAt   DateTime  @updatedAt
   user        User      @relation(fields: [userId], references: [id])
   selections  CourseSelection[] // Un estudiante puede tener múltiples selecciones (aunque solo permitiremos 1 activa)
+  votes       Vote[]    // Un estudiante puede tener múltiples votos
 }
 
 // Modelo de Curso
@@ -62,4 +64,18 @@ model CourseSelection {
   updatedAt       DateTime  @updatedAt
   student         Student   @relation(fields: [studentId], references: [id])
   selectedCourses Course[]  // Relación many-to-many con Course
+}
+
+// Modelo para el sistema de votación
+model Vote {
+  id          String    @id @default(uuid())
+  studentId   String
+  category    String    // Categoría de la votación (ej: "mejor_curso", "mejor_profesor")
+  option      String    // Opción seleccionada
+  comment     String?   // Comentario opcional
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  student     Student   @relation(fields: [studentId], references: [id])
+  
+  @@unique([studentId, category]) // Un estudiante solo puede votar una vez por categoría
 }

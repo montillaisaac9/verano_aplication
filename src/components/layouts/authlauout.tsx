@@ -84,22 +84,23 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, allowedRoles }) => {
   }
 
   // Phase 4: Role-Based Authorization
-  // Normaliza el rol del usuario a mayúsculas antes de compararlo
-  const userRoleNormalized = session?.user?.role?.toUpperCase(); // <-- ADDED THIS LINE
-
-  if (session?.user && allowedRoles && !allowedRoles.includes(userRoleNormalized as UserRole)) { // <-- CHANGED THIS LINE
-    console.warn(`Access Denied: Role ${session.user.role} (normalized to ${userRoleNormalized}) not permitted for this route. Allowed:`, allowedRoles);
-    if (!isRedirecting) {
-      setIsRedirecting(true);
-      toast.error('No tienes permiso para acceder a esta página.');
-      router.push('/access-denied');
+  if (session?.user && allowedRoles && allowedRoles.length > 0) {
+    const userRole = session.user.role as UserRole;
+    
+    if (!allowedRoles.includes(userRole)) {
+      console.warn(`Access Denied: Role ${userRole} not permitted for this route. Allowed:`, allowedRoles);
+      if (!isRedirecting) {
+        setIsRedirecting(true);
+        toast.error('No tienes permiso para acceder a esta página.');
+        router.push('/access-denied');
+      }
+      return null;
     }
-    return null;
   }
 
   // Phase 5: Render DefaultLayout with the user's role
   return session && session.user ? (
-    <DefaultLayout userRole={session.user.role}>{children}</DefaultLayout>
+    <DefaultLayout userRole={session.user.role as UserRole}>{children}</DefaultLayout>
   ) : null;
 };
 
